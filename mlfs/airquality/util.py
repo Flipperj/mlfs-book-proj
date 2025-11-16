@@ -182,12 +182,19 @@ def get_pm25(aqicn_url: str, country: str, city: str, street: str, day: datetime
     return aq_today_df
 
 
+
+
+
 def plot_air_quality_forecast(city: str, street: str, df: pd.DataFrame, file_path: str, hindcast=False):
     fig, ax = plt.subplots(figsize=(10, 6))
 
     day = pd.to_datetime(df['date']).dt.date
     # Plot each column separately in matplotlib
     ax.plot(day, df['predicted_pm25'], label='Predicted PM2.5', color='red', linewidth=2, marker='o', markersize=5, markerfacecolor='blue')
+
+    # Add new predicted pm25 values using the roll3 model
+    if 'predicted_pm25_new' in df.columns:
+        ax.plot(day,df['predicted_pm25_new'],label='Predicted PM2.5 (new model, roll3)',linestyle='--',linewidth=2,marker='s',markersize=5,)
 
     # Set the y-axis to a logarithmic scale
     ax.set_yscale('log')
@@ -298,3 +305,29 @@ def backfill_predictions_for_monitoring(weather_fg, air_quality_df, monitor_fg, 
     df = df.drop('pm25', axis=1)
     monitor_fg.insert(df, write_options={"wait_for_job": True})
     return hindcast_df
+
+def backfill_predictions_for_monitoring_combined(weather_fg, air_quality_df, monitor_fg, model_old, model_roll3=None):
+    air_quality = air_quality_df.sort_values("date")
+    features_df = weather_fg.read()
+    features_df = features_df.sort_values(by=['date'], ascending=True)
+
+    # Merge air_quality and weather fgs and save last 10 days of values only
+    features_df = pd.merge(air_quality, features_df, on=['date', 'city']).tail(10)
+
+    # Predict with old model
+    features_df['predicted_pm25'] = model_old.predict(features_df[['temperature_2m_mean', 'precipitation_sum', 'wind_speed_10m_max', 'wind_direction_10m_dominant']])
+
+    # Predict with new roll3 model if exists
+    if model_roll3 is not None and 'pm25_roll3' in features_df.columns:
+        features_df['predicted_pm25_new'] = model_roll3.predict(features_df[['pm25_roll3', 'temperature_2m_mean', 'precipitation_sum', 'wind_speed_10m_max', 'wind_direction_10m_dominant']]).astype(float)
+
+    features_df['days_before_forecast_day'] = 1
+    hindcast_df = features_df.copy()
+    monitor_feature_names = [f.name for f in monitor_fg.features]
+    df = features_df[monitor_feature_names]
+
+    monitor_fg.insert(df, write_options={"wait_for_job": True})
+
+    return hindcast_df
+
+
