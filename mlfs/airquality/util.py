@@ -200,7 +200,7 @@ def plot_air_quality_forecast(city: str, street: str, df: pd.DataFrame, file_pat
     ax.set_yscale('log')
     ax.set_yticks([0, 10, 25, 50, 100, 250, 500])
     ax.get_yaxis().set_major_formatter(plt.ScalarFormatter())
-    ax.set_ylim(bottom=1)
+    ax.set_ylim(bottom=0.1)
 
     # Set the labels and title
     ax.set_xlabel('Date')
@@ -310,9 +310,11 @@ def backfill_predictions_for_monitoring_combined(weather_fg, air_quality_df, mon
     air_quality = air_quality_df.sort_values("date")
     features_df = weather_fg.read()
     features_df = features_df.sort_values(by=['date'], ascending=True)
+    features_df['date'] = pd.to_datetime(features_df['date'], utc=True).dt.tz_convert(None)
+    air_quality['date'] = pd.to_datetime(air_quality['date'], utc=True).dt.tz_convert(None)
 
     # Merge air_quality and weather fgs and save last 10 days of values only
-    features_df = pd.merge(air_quality, features_df, on=['date', 'city']).tail(10)
+    features_df = pd.merge(air_quality, features_df, on=['date', 'city']).tail(10) # Maybe add street as key aswell.
 
     # Predict with old model
     features_df['predicted_pm25'] = model_old.predict(features_df[['temperature_2m_mean', 'precipitation_sum', 'wind_speed_10m_max', 'wind_direction_10m_dominant']])
