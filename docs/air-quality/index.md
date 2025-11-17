@@ -5,7 +5,7 @@
 {% include air-quality.html %}
 
 ![Forecast](./assets/img/pm25_forecast.png)
-
+![Forecast](./assets/img/pm25_forecast_Ringvattnet_Z 811.01.png)
 
 There is also a Python program to interact with the air quality ML system using language (text, voice),
 powered by a [function-calling LLM](https://www.hopsworks.ai/dictionary/function-calling-with-llms).
