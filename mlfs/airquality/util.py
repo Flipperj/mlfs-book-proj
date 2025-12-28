@@ -206,8 +206,8 @@ def plot_air_quality_forecast(city: str, street: str, df: pd.DataFrame, file_pat
     ax.plot(day, df['predicted_pm25'], label='Predicted PM2.5', color='red', linewidth=2, marker='o', markersize=5, markerfacecolor='blue')
 
     # Add new predicted pm25 values using the roll3 model
-    if 'predicted_pm25_new' in df.columns:
-        ax.plot(day,df['predicted_pm25_new'],label='Predicted PM2.5 (new model, roll3)',linestyle='--',linewidth=2,marker='s',markersize=5,)
+    if 'predicted_sek' in df.columns:
+        ax.plot(day,df['predicted_sek'],label='Predicted SEK',linestyle='--',linewidth=2,marker='s',markersize=5,)
 
     # Set the y-axis to a logarithmic scale
     ax.set_yscale('log')
@@ -218,7 +218,7 @@ def plot_air_quality_forecast(city: str, street: str, df: pd.DataFrame, file_pat
     # Set the labels and title
     ax.set_xlabel('Date')
     ax.set_title(f"PM2.5 Predicted (Logarithmic Scale) for {city}, {street}")
-    ax.set_ylabel('PM2.5')
+    ax.set_ylabel('SEK')
 
     colors = ['green', 'yellow', 'orange', 'red', 'purple', 'darkred']
     labels = ['Good', 'Moderate', 'Unhealthy for Some', 'Unhealthy', 'Very Unhealthy', 'Hazardous']
