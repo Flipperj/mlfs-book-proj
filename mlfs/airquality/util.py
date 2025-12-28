@@ -182,7 +182,20 @@ def get_pm25(aqicn_url: str, country: str, city: str, street: str, day: datetime
     return aq_today_df
 
 
-
+def get_energy_price(date):
+    #we do not have access to the energy price API, so we will manually update this value for now
+    energyPrice = {
+        "2025-12-28": 2.39,
+        "2025-12-27": 1.25,
+        "2025-12-26": 2.32,
+        "2025-12-25": 1.21,
+        "2025-12-24": 5.15,
+    }
+    if date in energyPrice:
+        return energyPrice[date]
+    else:
+        print(f"Error: Energy price for {date} is not available.")
+        raise ValueError(f"Energy price for {date} is not available.")
 
 
 def plot_air_quality_forecast(city: str, street: str, df: pd.DataFrame, file_path: str, hindcast=False):
