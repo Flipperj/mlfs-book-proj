@@ -141,58 +141,21 @@ def trigger_request(url:str):
     return data
 
 
-def get_pm25(aqicn_url: str, country: str, city: str, street: str, day: datetime.date, AQI_API_KEY: str):
-    """
-    Returns DataFrame with air quality (pm25) as dataframe
-    """
-    # The API endpoint URL
-    url = f"{aqicn_url}/?token={AQI_API_KEY}"
-
-    # Make a GET request to fetch the data from the API
-    data = trigger_request(url)
-
-    # if we get 'Unknown station' response then retry with city in url
-    if data['data'] == "Unknown station":
-        url1 = f"https://api.waqi.info/feed/{country}/{street}/?token={AQI_API_KEY}"
-        data = trigger_request(url1)
-
-    if data['data'] == "Unknown station":
-        url2 = f"https://api.waqi.info/feed/{country}/{city}/{street}/?token={AQI_API_KEY}"
-        data = trigger_request(url2)
-
-
-    # Check if the API response contains the data
-    if data['status'] == 'ok':
-        # Extract the air quality data
-        aqi_data = data['data']
-        aq_today_df = pd.DataFrame()
-        aq_today_df['pm25'] = [aqi_data['iaqi'].get('pm25', {}).get('v', None)]
-        aq_today_df['pm25'] = aq_today_df['pm25'].astype('float32')
-
-        aq_today_df['country'] = country
-        aq_today_df['city'] = city
-        aq_today_df['street'] = street
-        aq_today_df['date'] = day
-        aq_today_df['date'] = pd.to_datetime(aq_today_df['date'])
-        aq_today_df['url'] = aqicn_url
-    else:
-        print("Error: There may be an incorrect  URL for your Sensor or it is not contactable right now. The API response does not contain data.  Error message:", data['data'])
-        raise requests.exceptions.RequestException(data['data'])
-
-    return aq_today_df
 
 
 def get_energy_price(date):
     #we do not have access to the energy price API, so we will manually update this value for now
+    date_str = date.strftime("%Y-%m-%d")
     energyPrice = {
+        "2025-12-29": 2.71,
         "2025-12-28": 2.39,
         "2025-12-27": 1.25,
         "2025-12-26": 2.32,
         "2025-12-25": 1.21,
         "2025-12-24": 5.15,
     }
-    if date in energyPrice:
-        return energyPrice[date]
+    if date_str in energyPrice:
+        return energyPrice[date_str]
     else:
         print(f"Error: Energy price for {date} is not available.")
         raise ValueError(f"Energy price for {date} is not available.")
