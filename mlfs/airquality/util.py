@@ -143,10 +143,15 @@ def trigger_request(url:str):
 
 
 
-def get_energy_price(date):
+def get_energy_price(date=None):
     #we do not have access to the energy price API, so we will manually update this value for now
-    date_str = date.strftime("%Y-%m-%d")
-    energyPrice = {
+    energy_prices = {
+        "2026-01-04": 93.07,
+        "2026-01-03": 62.39,
+        "2026-01-02": 23.01,
+        "2026-01-01": 13.41,
+        "2025-12-31": 63.19,
+        "2025-12-30": 31.77,
         "2025-12-29": 2.71,
         "2025-12-28": 2.39,
         "2025-12-27": 1.25,
@@ -154,8 +159,12 @@ def get_energy_price(date):
         "2025-12-25": 1.21,
         "2025-12-24": 5.15,
     }
-    if date_str in energyPrice:
-        return energyPrice[date_str]
+    if date is None:
+        return energy_prices
+    
+    date_str = date.strftime("%Y-%m-%d")
+    if date_str in energ_prices:
+        return energy_prices[date_str]
     else:
         print(f"Error: Energy price for {date} is not available.")
         raise ValueError(f"Energy price for {date} is not available.")
@@ -255,7 +264,7 @@ def check_file_path(file_path):
     else:
         print(f"File successfully found at the path: {file_path}")
 
-def backfill_predictions_for_monitoring(weather_fg, air_quality_df, monitor_fg, model):
+"""def backfill_predictions_for_monitoring(weather_fg, air_quality_df, monitor_fg, model):
     features_df = weather_fg.read()
     features_df = features_df.sort_values(by=['date'], ascending=True)
     features_df = features_df.tail(10)
@@ -265,32 +274,37 @@ def backfill_predictions_for_monitoring(weather_fg, air_quality_df, monitor_fg, 
     hindcast_df = df
     df = df.drop('pm25', axis=1)
     monitor_fg.insert(df, write_options={"wait_for_job": True})
-    return hindcast_df
+    return hindcast_df"""
 
-def backfill_predictions_for_monitoring_combined(weather_fg, air_quality_df, monitor_fg, model_old, model_roll3=None):
-    air_quality = air_quality_df.sort_values("date")
+def backfill_predictions_for_monitoring(weather_fg, energy_price_df, monitor_fg, model):
     features_df = weather_fg.read()
-    features_df = features_df.sort_values(by=['date'], ascending=True)
-    features_df['date'] = pd.to_datetime(features_df['date'], utc=True).dt.tz_convert(None)
-    air_quality['date'] = pd.to_datetime(air_quality['date'], utc=True).dt.tz_convert(None)
+    features_df['date'] = pd.to_datetime(features_df['date']).dt.tz_localize(None)
+    energy_price_df['date'] = pd.to_datetime(energy_price_df['date']).dt.tz_localize(None)
+    
+    df = pd.merge(features_df, energy_price_df[['date', 'sek']], on="date", how="inner")
+    df = df.sort_values(by=['date'], ascending=True).tail(20)
+    
+    feature_cols = [
+        'temperature_2m_mean_flasjon', 'precipitation_sum_flasjon',
+        'wind_speed_10m_max_flasjon', 'wind_direction_10m_dominant_flasjon',
+        'temperature_2m_mean_hudiksvall', 'precipitation_sum_hudiksvall',
+        'wind_speed_10m_max_hudiksvall', 'wind_direction_10m_dominant_hudiksvall',
+        'temperature_2m_mean_ange', 'precipitation_sum_ange',
+        'wind_speed_10m_max_ange', 'wind_direction_10m_dominant_ange',
+        'temperature_2m_mean_solleftea', 'precipitation_sum_solleftea',
+        'wind_speed_10m_max_solleftea', 'wind_direction_10m_dominant_solleftea',
+        'temperature_2m_mean_umea', 'precipitation_sum_umea',
+        'wind_speed_10m_max_umea', 'wind_direction_10m_dominant_umea',
+    ]
 
-    # Merge air_quality and weather fgs and save last 10 days of values only
-    features_df = pd.merge(air_quality, features_df, on=['date', 'city']).tail(10) # Maybe add street as key aswell.
-
-    # Predict with old model
-    features_df['predicted_pm25'] = model_old.predict(features_df[['temperature_2m_mean', 'precipitation_sum', 'wind_speed_10m_max', 'wind_direction_10m_dominant']])
-
-    # Predict with new roll3 model if exists
-    if model_roll3 is not None and 'pm25_roll3' in features_df.columns:
-        features_df['predicted_pm25_new'] = model_roll3.predict(features_df[['pm25_roll3', 'temperature_2m_mean', 'precipitation_sum', 'wind_speed_10m_max', 'wind_direction_10m_dominant']]).astype(float)
-
-    features_df['days_before_forecast_day'] = 1
-    hindcast_df = features_df.copy()
-    monitor_feature_names = [f.name for f in monitor_fg.features]
-    df = features_df[monitor_feature_names]
-
-    monitor_fg.insert(df, write_options={"wait_for_job": True})
-
+    df['predicted_sek'] = model.predict(df[feature_cols])
+    df['days_before_forecast_day'] = 1
+    
+    insert_df = df.drop(columns=['sek'])
+    monitor_fg.insert(insert_df, write_options={"wait_for_job": True})
+    
+    hindcast_df = df[['date', 'predicted_sek', 'sek']]
     return hindcast_df
+    
 
 
