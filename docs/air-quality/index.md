@@ -1,4 +1,4 @@
-# Air Quality Dashboard
+# Energy Price Dashboard
 
 ![Hopsworks Logo](../titanic/assets/img/logo.png)
 
