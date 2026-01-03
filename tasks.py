@@ -52,10 +52,10 @@ def aq_train(c):
     c.run("uv run ipython notebooks/airquality/3_air_quality_training_pipeline.ipynb")
 
 @task
-def aq_inference(c):
+def ep_inference(c):
     check_venv()
-    c.run("uv run ipython notebooks/airquality/2_air_quality_feature_pipeline.ipynb")
-    c.run("uv run ipython notebooks/airquality/4_air_quality_batch_inference.ipynb")
+    c.run("uv run ipython notebooks/energy_price/2_energy_price_feature_pipeline.ipynb")
+    c.run("uv run ipython notebooks/energy_price/4_energy_price_inference.ipynb")
 
 
 @task
