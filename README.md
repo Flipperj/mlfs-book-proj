@@ -9,3 +9,5 @@ Weather data is collected from five stations within SE2. The stations are select
 - Proximity to major power generation facilities
 
 This selection aims to capture weather conditions that are most relevant for both electricity supply and demand in the region.
+
+The weather data is provided by openmeteo (same as lab 1), and energy data is gathered from nordpool.
