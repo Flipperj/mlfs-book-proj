@@ -10,4 +10,7 @@ Weather data is collected from five stations within SE2. The stations are select
 
 This selection aims to capture weather conditions that are most relevant for both electricity supply and demand in the region.
 
-The weather data is provided by openmeteo (same as lab 1), and energy data is gathered from nordpool.
+The weather data is provided by openmeteo (same as lab 1), and energy data is gathered from nordpool. Due to us not being able to obtain free API access to nordpool we are entering the energyprices manually into a dict every day.
+
+We are using hopsworks in the same ways as in Lab 1.
+
