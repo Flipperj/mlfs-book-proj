@@ -12,5 +12,4 @@ This selection aims to capture weather conditions that are most relevant for bot
 
 The weather data is provided by openmeteo (same as lab 1), and energy data is gathered from nordpool. Due to us not being able to obtain free API access to nordpool we are entering the energyprices manually into a dict every day.
 
-We are using hopsworks in the same ways as in Lab 1.
-
+Much of the code is re-used fromm lab 1 in ID2223 given during fall-2025. We are also using hopsworks in the same ways as in aforementioned lab.
