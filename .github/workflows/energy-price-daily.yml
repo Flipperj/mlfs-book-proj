@@ -1,4 +1,4 @@
-name: air-quality-daily
+name: energy-price-daily
 
 on:
   schedule:
