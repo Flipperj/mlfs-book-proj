@@ -59,7 +59,7 @@ aq-train:
 
 ep-inference:
 	ipython notebooks/energy_price/2_energy_price_feature_pipeline.ipynb
-	ipython notebooks/energy_price/4_energy_price_batch_inference.ipynb
+	ipython notebooks/energy_price/4_energy_price_inference.ipynb
 
 aq-llm:
 	ipython notebooks/airquality/5_function_calling.ipynb
