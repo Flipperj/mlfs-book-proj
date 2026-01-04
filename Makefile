@@ -57,9 +57,9 @@ aq-features:
 aq-train:
 	ipython notebooks/airquality/3_air_quality_training_pipeline.ipynb
 
-aq-inference:
-	ipython notebooks/airquality/2_air_quality_feature_pipeline.ipynb
-	ipython notebooks/airquality/4_air_quality_batch_inference.ipynb
+ep-inference:
+	ipython notebooks/energy_price/2_energy_price_feature_pipeline.ipynb
+	ipython notebooks/energy_price/4_energy_price_batch_inference.ipynb
 
 aq-llm:
 	ipython notebooks/airquality/5_function_calling.ipynb
