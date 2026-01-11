@@ -146,6 +146,8 @@ def trigger_request(url:str):
 def get_energy_price(date=None):
     #we do not have access to the energy price API, so we will manually update this value for now
     energy_prices = {
+        "2026-01-10": 995.30,
+        "2026-01-09": 823.45,
         "2026-01-08": 161.80,
         "2026-01-07": 296.05,
         "2026-01-06": 1177.50,
