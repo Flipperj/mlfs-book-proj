@@ -21,6 +21,6 @@
 ![Hindcast Graph](./energy_price/assets/img/energy_price_hindcast.png)
 
 ### 🧠 Feature Importance (Forecast Drivers)
-> **Analysis:**Feature importance graph for the current model
+> **Analysis:** Feature importance graph for the current model
 
 ![Feature Importance Graph](./energy_price/assets/img/feature_importance.png)
