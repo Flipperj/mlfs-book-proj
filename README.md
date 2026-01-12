@@ -17,7 +17,7 @@ The weather data is provided by openmeteo (same as lab 1), and energy data is ga
 Much of the code is re-used fromm lab 1 in ID2223 given during fall-2025. We are also using hopsworks in the same ways as in the aforementioned lab.
 
 ## Preview of historic results (More infromation can be found in the dashboard)
-<img width="1032" height="585" alt="image" src="https://github.com/user-attachments/assets/4d6972a5-54fd-4f27-8506-52a30b976bff" />
+<img width="1036" height="610" alt="image" src="https://github.com/user-attachments/assets/ac923590-8271-410e-b303-5ce7424f45a8" />
 
 <img width="1015" height="675" alt="Skärmavbild 2026-01-12 kl  08 58 56" src="https://github.com/user-attachments/assets/20aa160f-62ba-4b5d-a91f-de505b28e8a4" />
 
