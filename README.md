@@ -1,5 +1,7 @@
 ID2223 project
 
+Link to dashboard: https://flipperj.github.io/mlfs-book-proj/
+
 Alexander Dahm & Filip Stenbom
 
 The goal of this project is to predict electricity prices in Sweden using weather data. The analysis focuses on electricity price zone SE2, which has a high share of wind and hydropower generation.
